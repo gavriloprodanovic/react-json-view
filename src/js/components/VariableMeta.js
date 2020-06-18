@@ -70,6 +70,35 @@ export default class extends React.PureComponent {
         );
     }
 
+    getInsertAfterAttribute = () => {
+        const {
+            theme, namespace, name, src, rjvId, depth
+        } = this.props;
+
+        return (
+            <span
+                class="click-to-add"
+                style={{verticalAlign: 'top'}}>
+                <Add
+                    class="click-to-add-icon"
+                    {...Theme(theme, 'addVarIcon')}
+                    onClick={() => {
+                        dispatcher.dispatch({
+                            name: 'INSERT_AFTER',
+                            rjvId: rjvId,
+                            data: {
+                                name: -1,
+                                namespace: namespace,
+                                insert_after: true
+                            }
+                        });
+                        
+                    }}
+                />
+            </span>
+        );
+    }
+
     getRemoveObject = () => {
         const {
             theme, hover, namespace, name, src, rjvId
@@ -106,9 +135,11 @@ export default class extends React.PureComponent {
             theme,
             onDelete,
             onAdd,
+            onInsertAfter,
             enableClipboard,
             src,
-            namespace
+            namespace,
+            type
         } = this.props;
         return (
             <div
@@ -130,6 +161,9 @@ export default class extends React.PureComponent {
                 {/* copy add/remove icons */}
                 {onAdd !== false ? this.getAddAttribute() : null}
                 {onDelete !== false ? this.getRemoveObject() : null}
+                {onInsertAfter !== false  && type === 'array'
+                    ? this.getInsertAfterAttribute()
+                    : null}
             </div>
         );
     }

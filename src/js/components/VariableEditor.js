@@ -22,7 +22,7 @@ import {
 } from './DataTypes/DataTypes';
 
 //clibboard icon
-import { Edit, CheckCircle, RemoveCircle as Remove } from './icons';
+import { Edit, CheckCircle, RemoveCircle as Remove, AddCircle as AddIcon } from './icons';
 
 //theme
 import Theme from './../themes/getStyle';
@@ -53,6 +53,7 @@ class VariableEditor extends React.PureComponent {
             enableClipboard,
             onEdit,
             onDelete,
+            onInsertAfter,
             onSelect,
             rjvId
         } = this.props;
@@ -128,6 +129,9 @@ class VariableEditor extends React.PureComponent {
                 {onDelete !== false && editMode == false
                     ? this.getRemoveIcon()
                     : null}
+                {onInsertAfter !== false && editMode == false && type === 'array'
+                    ? this.getAddIcon()
+                    : null}
             </div>
         );
     }
@@ -180,6 +184,30 @@ class VariableEditor extends React.PureComponent {
                                 namespace: namespace,
                                 existing_value: variable.value,
                                 variable_removed: true
+                            }
+                        });
+                    }}
+                />
+            </div>
+        );
+    }
+
+    getAddIcon = () => {
+        const { variable, namespace, theme, rjvId } = this.props;
+
+        return (
+            <div class="click-to-add" style={{ verticalAlign: 'top' }}>
+                <AddIcon
+                    class="click-to-add-icon"
+                    {...Theme(theme, 'addVarIcon')}
+                    onClick={() => {
+                        dispatcher.dispatch({
+                            name: 'INSERT_AFTER',
+                            rjvId: rjvId,
+                            data: {
+                                name: variable.name,
+                                namespace: namespace,
+                                insert_after: true
                             }
                         });
                     }}

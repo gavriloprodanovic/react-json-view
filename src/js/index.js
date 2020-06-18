@@ -54,6 +54,7 @@ class ReactJsonView extends React.PureComponent {
         onEdit: false,
         onDelete: false,
         onAdd: false,
+        onInsertAfter: false,
         onSelect: false,
         iconStyle: 'triangle',
         style: {},
@@ -222,7 +223,7 @@ class ReactJsonView extends React.PureComponent {
         } = ObjectAttributes.get(
             this.rjvId, 'action', 'variable-update'
         );
-        const { onEdit, onDelete, onAdd } = this.props;
+        const { onEdit, onDelete, onAdd, onInsertAfter } = this.props;
 
         const { src } = this.state;
 
@@ -246,6 +247,9 @@ class ReactJsonView extends React.PureComponent {
             break;
         case 'variable-removed':
             result = onDelete(on_edit_payload);
+            break;
+        case 'variable-inserted-after':
+            result = onInsertAfter(on_edit_payload);
             break;
         }
 

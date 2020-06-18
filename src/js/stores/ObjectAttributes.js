@@ -67,12 +67,23 @@ class ObjectAttributes extends EventEmitter {
             this.set(rjvId, 'action', 'new-key-request', data);
             this.emit('add-key-request-' + rjvId);
             break;
+        case 'INSERT_AFTER':
+            action.data.updated_src = this.updateSrc(
+                rjvId, data
+            );
+            this.set(
+                rjvId, 'action', 'variable-update',
+                {...data, type:'variable-inserted-after'}
+            );
+            this.emit('variable-update-' + rjvId);
+            break;
         }
+
     }
 
     updateSrc = (rjvId, request) => {
         let {
-            name, namespace, new_value, existing_value, variable_removed
+            name, namespace, new_value, existing_value, variable_removed, insert_after
         } = request;
 
         namespace.shift();
@@ -94,6 +105,11 @@ class ObjectAttributes extends EventEmitter {
                 walk.splice(name, 1);
             } else {
                 delete walk[name];
+            }
+        } else if(insert_after) {
+            if (toType(walk) == 'array') {
+                let insertIndex = parseInt(name) + 1;
+                walk.splice(insertIndex, 0, null);
             }
         } else {
             //update copied variable at specified namespace

@@ -12,6 +12,32 @@ import JsonViewer from "./../../src/js/index"
 //render 2 different examples of the react-json-view component
 ReactDom.render(
     <div>
+        {/* Schema.org example for editing */}
+        <JsonViewer
+            sortKeys
+            src={getExampleSchemaJson1()}
+            onEdit={e => {
+                console.log("edit callback", e)
+                if (e.new_value == "error") {
+                    return false
+                }
+            }}
+            onDelete={e => {
+                console.log("delete callback", e)
+            }}
+            onInsertAfter={e => {
+                console.log("Insert after callback", e)
+                if (e.new_value == "error") {
+                    return false
+                }
+            }}
+
+            displayDataTypes={false}
+
+        />
+
+        <br />
+
         {/* just pass in your JSON to the src attribute */}
         <JsonViewer
             sortKeys
@@ -50,7 +76,7 @@ ReactDom.render(
                 }
                 return false
             }}
-            defaultValue=""
+            defaultValue="asd dev val"
         />
 
         <br />
@@ -174,6 +200,33 @@ ReactDom.render(
 /*-------------------------------------------------------------------------*/
 /*     the following functions just contain test json data for display     */
 /*-------------------------------------------------------------------------*/
+
+//example schema for editing
+function getExampleSchemaJson1() {
+    return (
+        {
+            '@type': 'Article',
+            name: [],
+            headline: [],
+            url: [
+                'http://example.com'
+            ],
+            author: [
+                {
+                    '@type': 'Organization',
+                    name: [],
+                    url: [],
+                    image: [
+                        {
+                            '@type': 'ImageObject',
+                            'url': []
+                        }
+                    ]
+                }
+            ]
+        }
+    )
+}
 
 //just a function to get an example JSON object
 function getExampleJson1() {

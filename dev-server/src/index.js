@@ -34,6 +34,41 @@ ReactDom.render(
 
             displayDataTypes={false}
 
+            defaultValueGetter={(namespace, walk, name, updated_src) => {
+                let value = undefined;
+
+                let type = namespace[namespace.length-1];
+                
+
+                if (type === 'author') {
+                    value = {
+                        '@type': 'Organization',
+                        'name': [
+                        ],
+                        'url': [],
+                        'image': [
+                            {
+                                '@type': 'ImageObject',
+                                'url': []
+                            }
+                        ]
+                    }
+                }
+
+                if (type === 'image') {
+                    value = {
+                        '@type': 'ImageObject',
+                        'url': []
+                    }
+                }
+
+                if (type === 'url') {
+                    value = 'http://example.com';
+                }
+
+                return value;
+            }}
+
         />
 
         <br />

@@ -83,7 +83,7 @@ class ObjectAttributes extends EventEmitter {
 
     updateSrc = (rjvId, request) => {
         let {
-            name, namespace, new_value, existing_value, variable_removed, insert_after
+            name, namespace, new_value, existing_value, variable_removed, insert_after, defaultValueGetter
         } = request;
 
         namespace.shift();
@@ -109,7 +109,13 @@ class ObjectAttributes extends EventEmitter {
         } else if(insert_after) {
             if (toType(walk) == 'array') {
                 let insertIndex = parseInt(name) + 1;
-                walk.splice(insertIndex, 0, null);
+
+                let value = undefined;
+                if (defaultValueGetter !== undefined) {
+                    value = defaultValueGetter(namespace, walk, name, updated_src);
+                }
+
+                walk.splice(insertIndex, 0, value);
             }
         } else {
             //update copied variable at specified namespace

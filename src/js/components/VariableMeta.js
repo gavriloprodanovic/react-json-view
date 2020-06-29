@@ -72,7 +72,7 @@ export default class extends React.PureComponent {
 
     getInsertAfterAttribute = () => {
         const {
-            theme, namespace, name, src, rjvId, depth
+            theme, namespace, name, src, rjvId, depth, defaultValueGetter
         } = this.props;
 
         return (
@@ -89,7 +89,8 @@ export default class extends React.PureComponent {
                             data: {
                                 name: -1,
                                 namespace: namespace,
-                                insert_after: true
+                                insert_after: true,
+                                defaultValueGetter: defaultValueGetter
                             }
                         });
                         

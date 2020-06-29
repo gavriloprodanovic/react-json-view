@@ -193,7 +193,7 @@ class VariableEditor extends React.PureComponent {
     }
 
     getAddIcon = () => {
-        const { variable, namespace, theme, rjvId } = this.props;
+        const { variable, namespace, theme, rjvId, defaultValueGetter} = this.props;
 
         return (
             <div class="click-to-add" style={{ verticalAlign: 'top' }}>
@@ -207,7 +207,8 @@ class VariableEditor extends React.PureComponent {
                             data: {
                                 name: variable.name,
                                 namespace: namespace,
-                                insert_after: true
+                                insert_after: true,
+                                defaultValueGetter: defaultValueGetter
                             }
                         });
                     }}

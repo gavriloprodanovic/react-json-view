@@ -168,7 +168,7 @@ class VariableEditor extends React.PureComponent {
     }
 
     getRemoveIcon = () => {
-        const { variable, namespace, theme, rjvId } = this.props;
+        const { variable, namespace, theme, rjvId, updateProcessor } = this.props;
 
         return (
             <div class="click-to-remove" style={{ verticalAlign: 'top' }}>
@@ -183,7 +183,8 @@ class VariableEditor extends React.PureComponent {
                                 name: variable.name,
                                 namespace: namespace,
                                 existing_value: variable.value,
-                                variable_removed: true
+                                variable_removed: true,
+                                updateProcessor: updateProcessor
                             }
                         });
                     }}
@@ -193,7 +194,7 @@ class VariableEditor extends React.PureComponent {
     }
 
     getAddIcon = () => {
-        const { variable, namespace, theme, rjvId, defaultValueGetter} = this.props;
+        const { variable, namespace, theme, rjvId, defaultValueGetter, updateProcessor} = this.props;
 
         return (
             <div class="click-to-add" style={{ verticalAlign: 'top' }}>
@@ -208,7 +209,8 @@ class VariableEditor extends React.PureComponent {
                                 name: variable.name,
                                 namespace: namespace,
                                 insert_after: true,
-                                defaultValueGetter: defaultValueGetter
+                                defaultValueGetter: defaultValueGetter,
+                                updateProcessor: updateProcessor
                             }
                         });
                     }}
@@ -318,7 +320,7 @@ class VariableEditor extends React.PureComponent {
     }
 
     submitEdit = submit_detected => {
-        const { variable, namespace, rjvId } = this.props;
+        const { variable, namespace, rjvId, updateProcessor } = this.props;
         const { editValue, parsedInput } = this.state;
         let new_value = editValue;
         if (submit_detected && parsedInput.type) {
@@ -335,7 +337,8 @@ class VariableEditor extends React.PureComponent {
                 namespace: namespace,
                 existing_value: variable.value,
                 new_value: new_value,
-                variable_removed: false
+                variable_removed: false,
+                updateProcessor: updateProcessor
             }
         });
     }

@@ -27,6 +27,16 @@ class ObjectAttributes extends EventEmitter {
         return this.objects[rjvId][name][key];
     }
 
+    onAddClickResultCallback = (action, result) => {
+        const {rjvId, data, name} = action;
+        data.new_value = { ...data.existing_value, ...result };
+        dispatcher.dispatch({
+            name: 'VARIABLE_ADDED',
+            rjvId: rjvId,
+            data: data
+        });
+    }
+
     handleAction = (action) => {
         const {rjvId, data, name} = action;
         switch (name) {
@@ -63,10 +73,21 @@ class ObjectAttributes extends EventEmitter {
             );
             this.emit('variable-update-' + rjvId);
             break;
-        case 'ADD_VARIABLE_KEY_REQUEST':
-            this.set(rjvId, 'action', 'new-key-request', data);
-            this.emit('add-key-request-' + rjvId);
+        case 'ADD_VARIABLE_KEY_REQUEST': {
+            let doDefaultAction = true;
+
+            if (data.onAddClick) {
+                let handled = data.onAddClick(action, 
+                    (result) => this.onAddClickResultCallback(action, result));
+                doDefaultAction = !handled;
+            }
+
+            if (doDefaultAction) {
+                this.set(rjvId, 'action', 'new-key-request', data);
+                this.emit('add-key-request-' + rjvId);
+            }
             break;
+        }
         case 'INSERT_AFTER':
             action.data.updated_src = this.updateSrc(
                 rjvId, data
@@ -83,7 +104,8 @@ class ObjectAttributes extends EventEmitter {
 
     updateSrc = (rjvId, request) => {
         let {
-            name, namespace, new_value, existing_value, variable_removed, insert_after, defaultValueGetter
+            name, namespace, new_value, existing_value, variable_removed, insert_after,
+            defaultValueGetter, updateProcessor
         } = request;
 
         namespace.shift();
@@ -91,7 +113,37 @@ class ObjectAttributes extends EventEmitter {
         //deepy copy src
         let src = this.get(rjvId, 'global', 'src');
         //deep copy of src variable
-        let updated_src = this.deepCopy(src, [...namespace]);
+        let srcDeepCopy = this.deepCopy(src, [...namespace]);
+        let processedSrc = false;
+
+        let useDefaultUpdateProcessor = true;
+        
+        if (updateProcessor) {
+            processedSrc = updateProcessor(srcDeepCopy, request);
+            if (processedSrc !== false) {
+                useDefaultUpdateProcessor = false;
+            }
+        }
+
+        if (useDefaultUpdateProcessor) {
+            processedSrc = this.defaultUpdateProcessor(srcDeepCopy, request);
+        }
+
+
+        if (processedSrc !== false && processedSrc !== null) {
+            this.set(
+                rjvId, 'global', 'src', processedSrc
+            );
+        }
+
+        return processedSrc;
+    }
+
+    defaultUpdateProcessor = (updated_src, request) => {
+        let {
+            name, namespace, new_value, variable_removed, insert_after,
+            defaultValueGetter
+        } = request;
 
         //point at current index
         let walk = updated_src;
@@ -125,10 +177,6 @@ class ObjectAttributes extends EventEmitter {
                 updated_src = new_value;
             }
         }
-
-        this.set(
-            rjvId, 'global', 'src', updated_src
-        );
 
         return updated_src;
     }

@@ -28,7 +28,7 @@ export default class extends React.PureComponent {
 
     getAddAttribute = () => {
         const {
-            theme, namespace, name, src, rjvId, depth
+            theme, namespace, name, src, rjvId, depth, onAddClick, updateProcessor
         } = this.props;
 
         return (
@@ -46,7 +46,9 @@ export default class extends React.PureComponent {
                             ),
                             existing_value: src,
                             variable_removed: false,
-                            key_name: null
+                            key_name: null,
+                            onAddClick: onAddClick,
+                            updateProcessor: updateProcessor
                         };
                         if (toType(src) === 'object') {
                             dispatcher.dispatch({
@@ -72,7 +74,7 @@ export default class extends React.PureComponent {
 
     getInsertAfterAttribute = () => {
         const {
-            theme, namespace, name, src, rjvId, depth, defaultValueGetter
+            theme, namespace, name, src, rjvId, depth, defaultValueGetter, updateProcessor
         } = this.props;
 
         return (
@@ -90,7 +92,8 @@ export default class extends React.PureComponent {
                                 name: -1,
                                 namespace: namespace,
                                 insert_after: true,
-                                defaultValueGetter: defaultValueGetter
+                                defaultValueGetter: defaultValueGetter,
+                                updateProcessor: updateProcessor
                             }
                         });
                         
@@ -102,7 +105,7 @@ export default class extends React.PureComponent {
 
     getRemoveObject = () => {
         const {
-            theme, hover, namespace, name, src, rjvId
+            theme, hover, namespace, name, src, rjvId, updateProcessor
         } = this.props;
 
         //don't allow deleting of root node
@@ -122,7 +125,8 @@ export default class extends React.PureComponent {
                                 name: name,
                                 namespace: namespace.splice(0, (namespace.length-1)),
                                 existing_value: src,
-                                variable_removed: true
+                                variable_removed: true,
+                                updateProcessor: updateProcessor
                             },
                         });
                     }}
@@ -160,7 +164,7 @@ export default class extends React.PureComponent {
                     : null
                 }
                 {/* copy add/remove icons */}
-                {onAdd !== false ? this.getAddAttribute() : null}
+                {onAdd !== false && type !== 'array' ? this.getAddAttribute() : null}
                 {onDelete !== false ? this.getRemoveObject() : null}
                 {onInsertAfter !== false  && type === 'array'
                     ? this.getInsertAfterAttribute()

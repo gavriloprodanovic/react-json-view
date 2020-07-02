@@ -16,6 +16,21 @@ ReactDom.render(
         <JsonViewer
             sortKeys
             src={getExampleSchemaJson1()}
+
+            onAddClick={(action, resultCallback) => {
+                console.log('onAddClick handler: ', action, resultCallback);
+                setTimeout(() => {console.log('timeout got'); resultCallback({newKeyVAR: 'added value'});}, 2000);
+                return true;
+            }
+            }
+
+            onAdd={e => {
+                console.log("add callback", e)
+                if (e.new_value == "error") {
+                    return false
+                }
+            }}
+
             onEdit={e => {
                 console.log("edit callback", e)
                 if (e.new_value == "error") {
@@ -67,6 +82,11 @@ ReactDom.render(
                 }
 
                 return value;
+            }}
+
+            updateProcessor={(updated_src, request) => {
+                console.log("I am custom update processor: ", updated_src, request);
+                return false;
             }}
 
         />

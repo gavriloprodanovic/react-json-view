@@ -45,7 +45,7 @@ class ObjectAttributes extends EventEmitter {
             break;
         case 'VARIABLE_UPDATED':
             action.data.updated_src = this.updateSrc(
-                rjvId, data
+                rjvId, data, name
             );
             this.set(
                 rjvId, 'action', 'variable-update',
@@ -55,7 +55,7 @@ class ObjectAttributes extends EventEmitter {
             break;
         case 'VARIABLE_REMOVED':
             action.data.updated_src = this.updateSrc(
-                rjvId, data
+                rjvId, data, name
             );
             this.set(
                 rjvId, 'action', 'variable-update',
@@ -65,7 +65,7 @@ class ObjectAttributes extends EventEmitter {
             break;
         case 'VARIABLE_ADDED':
             action.data.updated_src = this.updateSrc(
-                rjvId, data
+                rjvId, data, name
             );
             this.set(
                 rjvId, 'action', 'variable-update',
@@ -90,7 +90,7 @@ class ObjectAttributes extends EventEmitter {
         }
         case 'INSERT_AFTER':
             action.data.updated_src = this.updateSrc(
-                rjvId, data
+                rjvId, data, name
             );
             this.set(
                 rjvId, 'action', 'variable-update',
@@ -102,7 +102,7 @@ class ObjectAttributes extends EventEmitter {
 
     }
 
-    updateSrc = (rjvId, request) => {
+    updateSrc = (rjvId, request, action_name) => {
         let {
             name, namespace, new_value, existing_value, variable_removed, insert_after,
             defaultValueGetter, updateProcessor
@@ -119,7 +119,7 @@ class ObjectAttributes extends EventEmitter {
         let useDefaultUpdateProcessor = true;
         
         if (updateProcessor) {
-            processedSrc = updateProcessor(srcDeepCopy, request);
+            processedSrc = updateProcessor(srcDeepCopy, request, action_name);
             if (processedSrc !== false) {
                 useDefaultUpdateProcessor = false;
             }

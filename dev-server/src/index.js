@@ -23,6 +23,12 @@ ReactDom.render(
                 return true;
             }
             }
+            
+            onEditClick={(variable, namespace, editCallback) => {
+                console.log(variable, namespace);
+                editCallback("edited!!!");
+                return true;
+            }}
 
             onAdd={e => {
                 console.log("add callback", e)

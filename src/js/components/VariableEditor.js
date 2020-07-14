@@ -137,7 +137,7 @@ class VariableEditor extends React.PureComponent {
     }
 
     getEditIcon = () => {
-        const { variable, theme } = this.props;
+        const { variable, namespace, onEditClick, theme } = this.props;
 
         return (
             <div class="click-to-edit" style={{ verticalAlign: 'top' }}>
@@ -145,7 +145,13 @@ class VariableEditor extends React.PureComponent {
                     class="click-to-edit-icon"
                     {...Theme(theme, 'editVarIcon')}
                     onClick={() => {
-                        this.prepopInput(variable);
+                        let doDefault = true;
+                        if (onEditClick) {
+                            doDefault = !onEditClick(variable, namespace, this.dispatchVariableUpdate);
+                        }
+                        if (doDefault) {
+                            this.prepopInput(variable);
+                        }
                     }}
                 />
             </div>
@@ -320,7 +326,6 @@ class VariableEditor extends React.PureComponent {
     }
 
     submitEdit = submit_detected => {
-        const { variable, namespace, rjvId, updateProcessor } = this.props;
         const { editValue, parsedInput } = this.state;
         let new_value = editValue;
         if (submit_detected && parsedInput.type) {
@@ -329,6 +334,12 @@ class VariableEditor extends React.PureComponent {
         this.setState({
             editMode: false
         });
+        
+        this.dispatchVariableUpdate(new_value);
+    }
+
+    dispatchVariableUpdate = new_value => {
+        const { variable, namespace, rjvId, updateProcessor } = this.props;
         dispatcher.dispatch({
             name: 'VARIABLE_UPDATED',
             rjvId: rjvId,
